@@ -7,17 +7,23 @@
 #Last Modified: Aug-8-2019
 #---------------------------------------------#
 
+
+
+# Installing packages -----------------------------------------------------
+
+# install.packages("purrr")
+# install.packages("RColorBrewer")
+# install.packages("leaflet")
+# install.packages("Hmisc")
+# install.packages("htmlwidgets")
+# install.packages("sf")
+# install.packages("rmapshaper")
+# install.packages("tigris")
+
+
 #loading libraries
 library(purrr)
-library(readr)
-library(data.table)
-library(dplyr)
-library(tidyr)  
-library(ggplot2)
-library(stringi)
-library(stringr)
 library(RColorBrewer)
-library(xlsx)
 library(leaflet)
 library(Hmisc)
 library(htmltools)

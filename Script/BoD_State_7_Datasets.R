@@ -7,9 +7,7 @@
 #Last Modified: Aug-8-2019
 #---------------------------------------------#
 
-library(dplyr)
-library(tidyr)
-library(readr)
+
 
 
 # Creating teh data sets --------------------------------------------------
@@ -79,7 +77,7 @@ burden_unified <- burden %>%
 
 # Writing the data sets ---------------------------------------------------
 
-
+write_csv(burden, path = "Final Data/burden_all.csv")  
 write_csv(burden_county ,path = "Final Data/burden_county.csv")
 write_csv(burden_place ,path = "Final Data/burden_place.csv")
 write_csv(burden_zip ,path = "Final Data/burden_zip.csv")

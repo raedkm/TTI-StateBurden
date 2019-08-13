@@ -9,15 +9,13 @@
 
 
 
-#Loading libraries
-library(DT)
-library(readr)
+
 
 #Reading cities
 cities_path <- "Data\\Cities.csv"
 cities_var <- c("PlaceFIPS", "PlaceName")
 
-cities <-  fread(path_cities, data.table = F, verbose = T, select = var_cities) %>%
+cities <-  fread(cities_path, data.table = F, verbose = T, select = cities_var) %>%
   mutate(PLACEA = stri_sub(PlaceFIPS, -5, -1)) %>%
   mutate(PlaceFIPS = str_pad(PlaceFIPS, 7, pad = "0")) %>%
   mutate(FIPS = stri_sub(PlaceFIPS, 1,2)) %>%

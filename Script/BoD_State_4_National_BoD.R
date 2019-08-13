@@ -9,16 +9,6 @@
 #---------------------------------------------#
 
 
-# Loading packages
-library(readr)
-library(dplyr)
-library(tidyr)
-library(data.table)
-library(readxl)
-library(stringr)
-library(stringi)
-library(DT)
-library(htmltools)
 
 
 

@@ -10,10 +10,6 @@
 
 #Note: Run "BoD_State_1.R" first to obtain dataset.
 
-library(ggplot2)
-library(scales)
-library(forcats)
-
 
 
 # Loading Burden data -----------------------------------------------------
@@ -27,14 +23,6 @@ set.seed(1)
 index <- sample(1:nrow(burden), 10000)
 burden_s <- burden[index, ]  
 
-# # for testing
-# burden_s <-burden_s %>% 
-#   mutate(INCOME = recode(burden[index,]$INCOME,  
-#                          "<20,000" = "<$20,000" , 
-#                          "20,000 to <35,000" = "$20,000 to <$35,000", 
-#                          "35,000 to <50,000" = "$35,000 to <$50,000", 
-#                          "50,000 to <75,000" = "$50,000 to <$75,000" , 
-#                          ">=75,000" = ">=$75,000"))
 
 burden_s <-burden %>% 
   mutate(INCOME = recode(burden$INCOME,  
@@ -160,7 +148,7 @@ burden_s %>%
 
 
 
-# 8.	AF concentration by living location
+# 8.	AF  by living location
 burden_s %>%
   ggplot(aes(x = URBAN, y = AF)) +
   geom_boxplot() + 
@@ -172,7 +160,7 @@ burden_s %>%
 
 
 
-# 9.	AF concentration by median income grp
+# 9.	AF  by median income grp
 burden_s %>%
   ggplot(aes(x = INCOME, y = AF)) +
   geom_boxplot() + 
@@ -184,7 +172,7 @@ burden_s %>%
 
 
 
-# 10.	AF concentration by living location stratified into median income grp
+# 10.	AF  by living location stratified into median income grp
 burden_s %>%
   ggplot(aes(x = URBAN, y = AF)) +
   facet_grid( ~ INCOME) +
@@ -197,7 +185,7 @@ burden_s %>%
 
 
 
-# 11.	AF concentration by median income grp stratified into living location
+# 11.	AF  by median income grp stratified into living location
 burden_s %>%
   ggplot(aes(x = INCOME, y = AF)) +
   facet_grid( ~ URBAN) +

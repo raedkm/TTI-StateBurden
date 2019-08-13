@@ -10,6 +10,35 @@
  
 
 
+
+# Increasing memory allocation --------------------------------------------
+
+memory.size()
+memory.limit(3210241024*1024)
+
+# to change the allocation size change the first two numbers on the left >> memory.limit(XX10241024*1024)
+
+
+# Installing packages -----------------------------------------------------
+
+# install.packages("readr")
+# install.packages("dplyr")
+# install.packages("tidyr")
+# install.packages("data.table")
+# install.packages("readxl")
+# install.packages("stringr")
+# install.packages("stringi")
+# install.packages("DT")
+# install.packages("htmltools")
+# install.packages("ggplot2")
+# install.packages("scales")
+# install.packages("forcats")
+
+
+
+
+
+
 # Loading packagesa -------------------------------------------------------
 
 library(readr)
@@ -21,7 +50,9 @@ library(stringr)
 library(stringi)
 library(DT)
 library(htmltools)
-
+library(ggplot2)
+library(scales)
+library(forcats)
 
 # Loading census data -----------------------------------------------------
 
@@ -170,6 +201,7 @@ burden <- join %>%
 
 rm(join)
 
-  
+
+
   
   
