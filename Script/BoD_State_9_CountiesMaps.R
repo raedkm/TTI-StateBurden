@@ -147,7 +147,7 @@ interactiveMap <- burden_CountyShape %>%
 
 
 # Saving the Maps
-saveWidget(interactiveMap, file = "StateSpecific_Counties_leaf.html", selfcontained = F)
+saveWidget(interactiveMap, file = "StateSpecific_Counties_leaf.html", selfcontained = T)
 
 
 

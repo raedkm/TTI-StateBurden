@@ -39,7 +39,7 @@ memory.limit(3210241024*1024)
 
 
 
-# Loading packagesa -------------------------------------------------------
+# Loading packages -------------------------------------------------------
 
 library(readr)
 library(dplyr)
