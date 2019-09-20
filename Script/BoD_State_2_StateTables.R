@@ -136,7 +136,7 @@ for(i in 1:length(sheet)) {
   print(i)
   print(sheet[i])
   # Printing Aggregated data to Excel
-  xlsx::write.xlsx(burden_list[i], "Results/Tables/Burden_by_state.xlsx", sheetName = sheet[i], showNA=F, append = T, row.names = F)
+  xlsx::write.xlsx(burden_list[i], "Output/Tables/Burden_by_state.xlsx", sheetName = sheet[i], showNA=F, append = T, row.names = F)
   
   }
 

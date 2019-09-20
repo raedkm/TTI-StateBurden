@@ -113,11 +113,11 @@ table_6 <- burden %>%
 
 # Printing to excel -------------------------------------------------------
 
-xlsx::write.xlsx(table_1, "Results/Tables/Table_1.xlsx", row.names = F)
-xlsx::write.xlsx(table_2, "Results/Tables/Table_2.xlsx", row.names = F)
-xlsx::write.xlsx(table_3, "Results/Tables/Table_3.xlsx", row.names = F)
-xlsx::write.xlsx(table_4, "Results/Tables/Table_4.xlsx", row.names = F)
-xlsx::write.xlsx(table_5, "Results/Tables/Table_5.xlsx", row.names = F)
-xlsx::write.xlsx(table_6, "Results/Tables/Table_6.xlsx", row.names = F)
+xlsx::write.xlsx(table_1, "Output/Tables/Table_1.xlsx", row.names = F)
+xlsx::write.xlsx(table_2, "Output/Tables/Table_2.xlsx", row.names = F)
+xlsx::write.xlsx(table_3, "Output/Tables/Table_3.xlsx", row.names = F)
+xlsx::write.xlsx(table_4, "Output/Tables/Table_4.xlsx", row.names = F)
+xlsx::write.xlsx(table_5, "Output/Tables/Table_5.xlsx", row.names = F)
+xlsx::write.xlsx(table_6, "Output/Tables/Table_6.xlsx", row.names = F)
 
 

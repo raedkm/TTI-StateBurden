@@ -59,7 +59,7 @@ library(forcats)
 
 #Year 2010 data
 
-census2010_path <- "Data\\Census\\nhgis0043_ds172_2010_block.csv"
+census2010_path <- "Input/Census/nhgis0043_ds172_2010_block.csv"
 
 census2010_var <- c("GISJOIN", "YEAR", "STATE", "STATEA", "H7V001", 
                     "H7W003", "H7W004", "H7W005", "H7W006",      
@@ -95,7 +95,7 @@ census2010 <- fread(file = census2010_path,data.table = F, stringsAsFactors = F,
 
 #Year 2010 data
 
-income_2010_path <- "Data\\Census\\nhgis0043_ds176_20105_2010_blck_grp.csv"
+income_2010_path <- "Input/Census/nhgis0043_ds176_20105_2010_blck_grp.csv"
 
 income_2010_var <- c("GISJOIN", "JOIE001")
 
@@ -118,7 +118,7 @@ income_2010 <- fread(file = income_2010_path, data.table = F, stringsAsFactors =
 # Loading NO2 data --------------------------------------------------------
 
 #Year 2010 data
-NO2_2010_path <-"Data\\Pollutant\\NO2_2010.csv"
+NO2_2010_path <-"Input/Pollutant/NO2_2010.csv"
 NO2_2010_var <- c("GISJOIN", "Y2010")
 
 NO2_2010 <- fread(NO2_2010_path, data.table = F, stringsAsFactors = F,  verbose = F, select = NO2_2010_var) %>% 
@@ -133,7 +133,7 @@ NO2_2010 <- fread(NO2_2010_path, data.table = F, stringsAsFactors = F,  verbose 
 
 # Loading state-specific asthma IR data -----------------------------------
 
-path_inc <- "Data/Asthma/Asthma_IR_ver2.xlsx"
+path_inc <- "Input/Asthma/Asthma_IR_Input.xlsx"
 
 inc <- read_excel(path_inc, sheet = "Aggregate") %>% 
   mutate(IR = as.double(`IR per 1000`/1000)) %>% 
@@ -154,7 +154,7 @@ weighted_IR <- IR[[1]]
 
 # Loading state-specific asthma  PRV rate ---------------------------------
 
-path_prv <- "Data/Asthma/Asthma_PRV_ver2.xlsx"
+path_prv <- "Input/Asthma/Asthma_PR_Input.xlsx"
 
 prv <- read_excel(path_prv, sheet = "Aggregate") %>% 
   mutate(PRV = as.double(`PRV per 100`/100)) %>% 
@@ -182,6 +182,8 @@ join <- census2010 %>%
             replace_na(list(IR = weighted_IR, PRV = weighted_PRV)) %>% 
             select(-GISJOIN_i)
 
+
+# Removing used variables
 rm(census2010)
 rm(NO2_2010)
 rm(income_2010)
@@ -199,6 +201,8 @@ burden <- join %>%
   mutate(AF = (RRnew - 1)/(RRnew)) %>% 
   mutate(AC = AF*CASES) 
 
+
+# Removing used variables
 rm(join)
 
 
