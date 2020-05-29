@@ -133,41 +133,35 @@ NO2_2010 <- fread(NO2_2010_path, data.table = F, stringsAsFactors = F,  verbose 
 
 # Loading state-specific asthma IR data -----------------------------------
 
-path_inc <- "Input/Asthma/Asthma_IR_Input.xlsx"
+Asthma_rate <- readRDS("~/R projects/TTI-StateBurden/Input/Asthma/Asthma_rate.RDS") %>% as_tibble() %>% 
+  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left"))
+  
+load("~/R projects/TTI-StateBurden/Input/Asthma/IR_save.RDa")
+load("~/R projects/TTI-StateBurden/Input/Asthma/PR_save.RDa")
 
-inc <- read_excel(path_inc, sheet = "Aggregate") %>% 
-  mutate(IR = as.double(`IR per 1000`/1000)) %>% 
-  mutate(FIPS = str_pad(FIPS, 2, pad = "0")) %>% 
-  select(FIPS, IR)
+IR <- IR_save %>% 
+  as_tibble() %>%
+  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left")) %>% 
+  mutate(IR_low = ci_l*1000, 
+         IR_up = ci_u*1000) %>% 
+  select(-ci_l, -ci_u)
 
-
-# Estimating weighted IR
-IR <- read_excel(path_inc, sheet = "Aggregate") %>%   
-  summarise(IR = (sum(`<12_month`/YEARS)/sum(At_risk/YEARS)))
-
-# Assiggning weighted IR after manually dividing by the number of years states participated in.
-weighted_IR <- IR[[1]]
-
-
-
-
-
-# Loading state-specific asthma  PRV rate ---------------------------------
-
-path_prv <- "Input/Asthma/Asthma_PR_Input.xlsx"
-
-prv <- read_excel(path_prv, sheet = "Aggregate") %>% 
-  mutate(PRV = as.double(`PRV per 100`/100)) %>% 
-  mutate(FIPS = str_pad(FIPS, 2, pad = "0")) %>% 
-  select(FIPS, PRV)
+PR <- PR_save %>% 
+  as_tibble() %>% 
+  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left")) %>% 
+  mutate(PR_low = ci_l*1000, 
+         PR_up = ci_u*1000) %>% 
+  select(-ci_l, -ci_u)
 
 
-# Estimating weighted PRV
-PRV <- read_excel(path_prv, sheet = "Aggregate") %>%   
-  summarise(PRV = sum(EVER/YEARS)/sum(SAMPLE/YEARS))
-
-weighted_PRV <- PRV[[1]] 
-
+A <- Asthma_rate %>% 
+  left_join(IR, by = "FIPS") %>% 
+  left_join(PR, by = "FIPS") %>% 
+  mutate(IR_low = ifelse(is.na(IR_low), 11.64643, IR_low), 
+         IR_up = ifelse(is.na(IR_up), 11.64977, IR_up),
+         PR_low = ifelse(is.na(PR_low), 13.13278, PR_low), 
+         PR_up = ifelse(is.na(PR_up), 13.13334, PR_up))
+  
 
 
 # Joining Data Sets -------------------------------------------------------
@@ -177,16 +171,15 @@ join <- census2010 %>%
             mutate(GISJOIN_i = substr(GISJOIN, 1, 15)) %>% 
             left_join(NO2_2010, by = "GISJOIN") %>%
             left_join(income_2010, by = "GISJOIN_i") %>% 
-            left_join(inc, by = "FIPS") %>% 
-            left_join(prv, by = "FIPS") %>% 
-            replace_na(list(IR = weighted_IR, PRV = weighted_PRV)) %>% 
+            left_join(A, by = "FIPS") %>% 
             select(-GISJOIN_i)
 
 
-# Removing used variables
-rm(census2010)
-rm(NO2_2010)
-rm(income_2010)
+
+# #Removing used variables
+# rm(census2010)
+# rm(NO2_2010)
+# rm(income_2010)
 
 # Burden Modeling ---------------------------------------------------------
 
@@ -196,14 +189,14 @@ crf <- 1.05
 unit_inc <- 4
 
 burden <- join %>% 
-  mutate(CASES = (CHILDREN - (CHILDREN * PRV)) * IR) %>% 
+  mutate(CASES = (CHILDREN - (CHILDREN * (IR/1000))) * (IR/1000)) %>% 
   mutate(RRnew = exp((log(crf)/unit_inc)*NO2)) %>% 
   mutate(AF = (RRnew - 1)/(RRnew)) %>% 
   mutate(AC = AF*CASES) 
 
 
-# Removing used variables
-rm(join)
+# # Removing used variables
+#rm(join)
 
 
 
