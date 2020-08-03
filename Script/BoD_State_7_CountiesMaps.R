@@ -1,10 +1,10 @@
 #---------------------------------------------#
-#Project : State specific Burden of childhood asthma due to TRAP - 2019
-#Part    : (07) Creating Interactive Maps for counties
-#Purpose : Creating Interactive Maps for countiess
+#Project : Dissertation: Diabetes Mellitus Burden in the US 
+#Purpose: Conduct the burden modeling and estimate results by state
+#Part : (01) Preparing data sets (incidence and census) for inputs in burden estimation
 #Created by Raed Alotaibi
-#Date Created : Aug-6-2019
-#Last Modified: Aug-8-2019
+#Date Created: April-11-2020
+#Last modified: April-11-2020
 #---------------------------------------------#
 
 
@@ -47,7 +47,7 @@ CountyFIPS <- fread(CountyFIPS_path)
 burden_county <- burden %>% 
   group_by(STATE, COUNTY) %>% 
   summarise(TOTAL = sum(TOTAL), 
-            CHILDREN = sum(CHILDREN),
+            ADULT = sum(ADULT),
             NO2 = mean(NO2),
             CASES = sum(CASES),
             AC = sum(AC),
@@ -90,17 +90,17 @@ my.min <- function(x) ifelse( !all(is.na(x)), min(x, na.rm=T), NA)
 
 # Brewing colors
 
-rc1 <- colorRampPalette(colors = c("#41980a", "#ffe950" ), space = "Lab")(15)
-rc2 <- colorRampPalette(colors = c("#ffe950", "#ff4300" ), space = "Lab")(10)
-rc3 <- colorRampPalette(colors = c("#ff4300", "#8d1111" ), space = "Lab")(7)
-rc4 <- colorRampPalette(colors = c("#8d1111", "#450606" ), space = "Lab")(8)
+rc1 <- colorRampPalette(colors = c("#41980a", "#ffe950" ), space = "Lab")(10)
+rc2 <- colorRampPalette(colors = c("#ffe950", "#ff4300" ), space = "Lab")(15)
+rc3 <- colorRampPalette(colors = c("#ff4300", "#8d1111" ), space = "Lab")(20)
+rc4 <- colorRampPalette(colors = c("#8d1111", "#450606" ), space = "Lab")(10)
 rc5 <- colorRampPalette(colors = c("#450606", "#000000" ), space = "Lab")(5)
 
 rampcols <- c(rc1, rc2, rc3, rc4)
 previewColors(colorNumeric(palette = rampcols , domain = NULL), values = 0:my.max(burden_CountyShape$NO2))
 
 # Assigning brewed colors to pallette
-NO2_pal <- colorNumeric(rampcols, domain = burden_CountyShape$NO2)
+NO2_pal <- colorNumeric(rampcols, domain = burden_CountyShape$AF*100)
 
 
 # Define common CRS for county shape files
@@ -110,13 +110,13 @@ burden_CountyShape <- st_transform(burden_CountyShape, 4326)
 
 labels_2010 <- sprintf(
   "<strong>%s</strong><strong>, %s</strong> <br/>
-    Population of children  %g<br/>
+    Population of ADULT  %g<br/>
     Attributable case %g<br/>
     Percent of all cases %g<br/>
     Mean NO<sub>2</sub>  (ug/m<sup>3</sup>) %g",
   burden_CountyShape$NAME10,
   burden_CountyShape$STATE,
-  burden_CountyShape$CHILDREN, 
+  burden_CountyShape$ADULT, 
   round(burden_CountyShape$AC), 
   round(burden_CountyShape$AF*100),
   round(burden_CountyShape$NO2, digits = 1)) %>% 
@@ -125,7 +125,7 @@ labels_2010 <- sprintf(
 
 # Step 5: creating legend and title
 label_legend <- HTML("Percentage")
-label_title <- sprintf('<p><strong><b>Burden of Childhood Asthma Due to NO<sub>2</sub> in 2010 </b>' )
+label_title <- sprintf('<p><strong><b>Burden of Diabetes Mellitus Due to NO<sub>2</sub> in 2010 </b>' )
 
 
 #Step 6: Creating the Map
@@ -147,7 +147,7 @@ interactiveMap <- burden_CountyShape %>%
 
 
 # Saving the Maps
-saveWidget(interactiveMap, file = "StateSpecific_Counties_leaf.html", selfcontained = T)
+saveWidget(interactiveMap, file = "AF_Counties_leaf.html", selfcontained = T)
 
 
 
