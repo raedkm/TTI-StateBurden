@@ -185,11 +185,11 @@ join <- census2010 %>%
 
 ## Estimating (RR of new exposure: RRnew, Attributable fraction; AF, Attributable cases; AC with lower and upper limits)
 
-crf <- 1.05
+crf <- 1.06
 unit_inc <- 4
 
 burden <- join %>% 
-  mutate(CASES = (CHILDREN - (CHILDREN * (IR/1000))) * (IR/1000)) %>% 
+  mutate(CASES = (CHILDREN - (CHILDREN * (PR/1000))) * (IR/1000)) %>% 
   mutate(RRnew = exp((log(crf)/unit_inc)*NO2)) %>% 
   mutate(AF = (RRnew - 1)/(RRnew)) %>% 
   mutate(AC = AF*CASES) 
