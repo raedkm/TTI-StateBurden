@@ -133,35 +133,14 @@ NO2_2010 <- fread(NO2_2010_path, data.table = F, stringsAsFactors = F,  verbose 
 
 # Loading state-specific asthma IR data -----------------------------------
 
-Asthma_rate <- readRDS("~/R projects/TTI-StateBurden/Input/Asthma/Asthma_rate.RDS") %>% as_tibble() %>% 
-  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left"))
+(Asthma_rate <- readRDS("~/R projects/TTI-StateBurden/Input/Asthma/Asthma_rate.RDS")  %>% 
+ mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left"),
+        IR = round(IR, 3),
+        IR_low = round(IR_low, 3),
+        IR_up = round(IR_up, 3)))
+
   
-load("~/R projects/TTI-StateBurden/Input/Asthma/IR_save.RDa")
-load("~/R projects/TTI-StateBurden/Input/Asthma/PR_save.RDa")
 
-IR <- IR_save %>% 
-  as_tibble() %>%
-  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left")) %>% 
-  mutate(IR_low = ci_l*1000, 
-         IR_up = ci_u*1000) %>% 
-  select(-ci_l, -ci_u)
-
-PR <- PR_save %>% 
-  as_tibble() %>% 
-  mutate(FIPS = str_pad(FIPS, width = 2, pad = "0", side = "left")) %>% 
-  mutate(PR_low = ci_l*1000, 
-         PR_up = ci_u*1000) %>% 
-  select(-ci_l, -ci_u)
-
-
-A <- Asthma_rate %>% 
-  left_join(IR, by = "FIPS") %>% 
-  left_join(PR, by = "FIPS") %>% 
-  mutate(IR_low = ifelse(is.na(IR_low), 11.64643, IR_low), 
-         IR_up = ifelse(is.na(IR_up), 11.64977, IR_up),
-         PR_low = ifelse(is.na(PR_low), 13.13278, PR_low), 
-         PR_up = ifelse(is.na(PR_up), 13.13334, PR_up))
-  
 
 
 # Joining Data Sets -------------------------------------------------------
@@ -171,7 +150,7 @@ join <- census2010 %>%
             mutate(GISJOIN_i = substr(GISJOIN, 1, 15)) %>% 
             left_join(NO2_2010, by = "GISJOIN") %>%
             left_join(income_2010, by = "GISJOIN_i") %>% 
-            left_join(A, by = "FIPS") %>% 
+            left_join(Asthma_rate, by = "FIPS") %>% 
             select(-GISJOIN_i)
 
 
@@ -185,7 +164,7 @@ join <- census2010 %>%
 
 ## Estimating (RR of new exposure: RRnew, Attributable fraction; AF, Attributable cases; AC with lower and upper limits)
 
-crf <- 1.06
+crf <- 1.05
 unit_inc <- 4
 
 burden <- join %>% 
@@ -194,6 +173,29 @@ burden <- join %>%
   mutate(AF = (RRnew - 1)/(RRnew)) %>% 
   mutate(AC = AF*CASES) 
 
+
+## Using IR_low
+
+crf <- 1.05
+unit_inc <- 4
+
+burden <- join %>% 
+  mutate(CASES = (CHILDREN - (CHILDREN * (PR/1000))) * (IR_low/1000)) %>% 
+  mutate(RRnew = exp((log(crf)/unit_inc)*NO2)) %>% 
+  mutate(AF = (RRnew - 1)/(RRnew)) %>% 
+  mutate(AC = AF*CASES) 
+
+
+## Using IR_up
+
+crf <- 1.05
+unit_inc <- 4
+
+burden <- join %>% 
+  mutate(CASES = (CHILDREN - (CHILDREN * (PR/1000))) * (IR_up/1000)) %>% 
+  mutate(RRnew = exp((log(crf)/unit_inc)*NO2)) %>% 
+  mutate(AF = (RRnew - 1)/(RRnew)) %>% 
+  mutate(AC = AF*CASES) 
 
 # # Removing used variables
 #rm(join)
